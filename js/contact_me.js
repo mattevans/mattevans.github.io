@@ -21,8 +21,9 @@ $(function() {
                 firstName = name.split(' ').slice(0, -1).join(' ');
             }
             $.ajax({
-                url: "././mail/contact_me.php",
+                url: "http://formspree.io/mattevansnz@gmail.com",
                 type: "POST",
+                dataType: 'json',
                 data: {
                     name: name,
                     phone: phone,
@@ -44,7 +45,10 @@ $(function() {
                     //clear all fields
                     $('#contactForm').trigger("reset");
                 },
-                error: function() {
+                error: function(e) {
+
+                    console.log(e);
+
                     // Fail message
                     $('#success').html("<div class='alert alert-danger'>");
                     $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
