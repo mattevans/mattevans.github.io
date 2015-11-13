@@ -473,3 +473,9 @@ footer .footer-below {
 .added_projects .col-sm-3 a:hover img{
     opacity: 0.7;
 }
+
+.pgp{
+    margin-top: 50px;
+    text-align: center;
+    color: #dce4ec;
+}
