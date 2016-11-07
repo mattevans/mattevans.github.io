@@ -1,0 +1,69 @@
+==================================================================
+https://keybase.io/mattevansnz
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://mattevans.github.io
+  * I am mattevansnz (https://keybase.io/mattevansnz) on keybase.
+  * I have a public key with fingerprint 279F 8EE6 CA69 170E 2BF4  1FCE 4F3F E622 E20C 88E5
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "eldest_kid": "010106e42dd8c76ba8962a13e9b4c7bc1c22e5631adc0a8b303f509ad0e1ff654e840a",
+            "fingerprint": "279f8ee6ca69170e2bf41fce4f3fe622e20c88e5",
+            "host": "keybase.io",
+            "key_id": "4f3fe622e20c88e5",
+            "kid": "010106e42dd8c76ba8962a13e9b4c7bc1c22e5631adc0a8b303f509ad0e1ff654e840a",
+            "uid": "f37b62f83aef45fcde99e38be10f9719",
+            "username": "mattevansnz"
+        },
+        "service": {
+            "hostname": "mattevans.github.io",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1467973579,
+    "expire_in": 157680000,
+    "prev": "9f8ce31494ef9fe7b33ed7d7feb912a6ce8b932fc353a4a00bd6ce53daeff921",
+    "seqno": 4,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.0.53
+Comment: https://keybase.io/crypto
+
+yMIpAnicrZJrSBVBFMevmVb2IDCJ6D1gN8psd2efV5CggkjoQWJF2m1m98x1S3dv
+d1fzgd0igx4URC/0QyLREzWhECyKCslISLv5IQgjCMmoICoqgrBZqy/Rx2Y+DHPm
+///NOWemZ2p6KCttbc2+oyXO3Oa0vnutVaHNyWRfPaKuVYsi9WgXjC1QYYHnR3fZ
+FoogQeRTBVmyLN3UVEp0Q5WIiMGgsqlRUzQlCRQVi8QyBaJTLGCmCAaxBBAZUxUZ
+dFkgKA8x24lBIp6wHZ9jJc1gOoBqEtUQNQEkymSRmSAzzEDlSEkwdR0Ubix3vcDB
+k6PEg3zb5TG+iY6l9w/9f867agzHsEZViemYAJMVZlpgGIB1CqLADE00AqEHCYdU
+AldXEt+HauJ4Th1qyEP8oNo2IehtUMzfovyY7ZdX0V+VxROu75puBReU+37ciwQA
+vzYeOPYAjf5mRantWLyj3FENCc92HRQRudL07QAuyqpmaFjRjDwENXE7AVE7UCia
+qgt8BPdANUfyVzABi7IhAzMYaBRjsDRLY0ANUSKqCTo1sMRMrGAiE0GgFo8p2OJ9
+YIYkoqC63Y6LIjJPk8Q40rNjDvGrEoAa7t8tHR9KywplZowLflooa9L0P/+v48iE
+0VjvrcZvxQ3FjwZQ+zTo3fQulSp8fWB2b9Gn9u7H8/CXZ5XrxR+pNS3fk/1F6ybv
+pfsPvehMLphTF171tmLqmbaM2w+27YyFtxemyoaHnw+X9XQU7bxNT5dfX738WMP7
+gqV1V05ppRsKPix2kwNuWXTy02upl5WtNw5f6eo7WLDy6LLGhaMr2hfVXnwyM6Nv
+5Pv4lku703d8HcoVlE8XBtOv1he7TbGbJ7uHsr/m5pDw5/D6D2/v90fNnoWFIxtf
+vRkaOb8FbWlpvNbqF3eWHJpy4NyJV137R5c036vJ+TjQlH1ncCJ6rT6T4Mybsqv9
+Lwva5l8+Xne666yzWpkVnuE93Jqfaf0EyOdNUA==
+=uFLV
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/mattevansnz
+
+==================================================================
+
