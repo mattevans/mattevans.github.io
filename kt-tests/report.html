@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kurtosis Benchmark Report</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    details summary { cursor: pointer; }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::marker { display: none; content: ""; }
+    .chevron { transition: transform 0.2s; }
+    details[open] .chevron { transform: rotate(90deg); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-dvh">
+  <div class="mx-auto max-w-6xl px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl/10 font-bold tracking-tight">Kurtosis Benchmark Report</h1>
+      <p class="mt-1 text-sm/6 text-gray-500">2026-03-04T04:59:13Z</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white shadow-xs rounded-sm p-4">
+        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Runner</div>
+        <div class="mt-1 text-sm/6 font-medium">arm64 / Darwin</div>
+      </div>
+      <div class="bg-white shadow-xs rounded-sm p-4">
+        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Baseline</div>
+        <div class="mt-1 text-sm/6 font-medium">bench-baseline</div>
+        <code class="text-xs text-gray-400">cf51988</code>
+      </div>
+      <div class="bg-white shadow-xs rounded-sm p-4">
+        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Patched</div>
+        <div class="mt-1 text-sm/6 font-medium">refactor/boot-perf</div>
+        <code class="text-xs text-gray-400">9b50ace</code>
+      </div>
+      <div class="bg-white shadow-xs rounded-sm p-4">
+        <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Runs</div>
+        <div class="mt-1 text-sm/6 font-medium">8</div>
+      </div>
+    </div>
+    <div class="bg-white shadow-xs rounded-sm p-6 mb-6">
+      <h2 class="text-lg/7 font-semibold mb-6">Wall Clock Comparison</h2>
+      <div class="h-64 mb-6">
+        <canvas id="wallClockChart"></canvas>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm/6">
+          <thead>
+            <tr class="border-b border-gray-200 text-left text-gray-500 text-xs uppercase tracking-wide">
+              <th class="pb-2.5 pr-4 font-medium">Config</th>
+              <th class="pb-2.5 pr-4 font-medium text-right">Baseline</th>
+              <th class="pb-2.5 pr-4 font-medium text-right">Patched</th>
+              <th class="pb-2.5 pr-4 font-medium text-right">Delta</th>
+              <th class="pb-2.5 pr-4 font-medium text-right">Improvement</th>
+              <th class="pb-2.5 pr-4 font-medium text-right">Services</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-gray-100 group">
+              <td class="py-3.5 pr-4">
+                <div class="font-medium">multi-client</div>
+                <div class="text-xs text-gray-400">local</div>
+              </td>
+              <td class="py-3.5 pr-4 text-right font-mono">41.48s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">31.74s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">-9.74s</td>
+              <td class="py-3.5 pr-4 text-right"><span class="inline-block px-2 py-0.5 rounded-xs text-xs font-semibold bg-emerald-100 text-emerald-800">23.5%</span></td>
+              <td class="py-3.5 pr-4 text-right text-xs text-gray-400">32 / 32</td>
+            </tr>
+            <tr class="border-b border-gray-50">
+              <td colspan="6" class="px-0 py-0">
+                <details>
+                  <summary class="flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50">
+                    <svg class="chevron size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+                    Run details &amp; config
+                  </summary>
+                  <div class="px-4 pb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Baseline command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-baseline-multi-local --image-download missing --args-file configs/multi-client.yaml ./ethereum-package</code>
+                      </div>
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Patched command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-patched-multi-local --image-download missing --args-file configs/multi-client.yaml --parallel --parallelism 100 --resource-check=false ./ethereum-package</code>
+                      </div>
+                    </div>
+                    <div class="mt-3">
+                      <div class="text-xs font-medium text-gray-500 mb-1">Config: configs/multi-client.yaml</div>
+                      <pre class="text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto"><code>participants:
+  - el_type: geth
+    cl_type: prysm
+  - el_type: reth
+    cl_type: teku
+  - el_type: nethermind
+    cl_type: nimbus
+  - el_type: geth
+    cl_type: teku
+  - el_type: reth
+    cl_type: grandine
+  - el_type: nethermind
+    cl_type: nimbus
+  - el_type: geth
+    cl_type: nimbus
+  - el_type: reth
+    cl_type: teku
+  - el_type: nethermind
+    cl_type: prysm
+network_params:
+  preset: minimal
+  genesis_delay: 5
+  electra_fork_epoch: 0
+  fulu_fork_epoch: 18446744073709551615
+parallel_keystore_generation: true
+additional_services:
+  - dora
+  - spamoor
+dora_params:
+  image: "ethpandaops/dora:latest"
+spamoor_params:
+  image: "ethpandaops/spamoor:latest"
+  max_mem: 4000
+  spammers:
+    - scenario: eoatx
+      config:
+        throughput: 200
+    - scenario: blobs
+      config:
+        throughput: 20
+docker_cache_params:
+  enabled: true
+  url: "docker.ethquokkaops.io"</code></pre>
+                    </div>
+                  </div>
+                </details>
+              </td>
+            </tr>
+            <tr class="border-b border-gray-100 group">
+              <td class="py-3.5 pr-4">
+                <div class="font-medium">multi-client</div>
+                <div class="text-xs text-gray-400">remote</div>
+              </td>
+              <td class="py-3.5 pr-4 text-right font-mono">43.52s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">32.12s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">-11.40s</td>
+              <td class="py-3.5 pr-4 text-right"><span class="inline-block px-2 py-0.5 rounded-xs text-xs font-semibold bg-emerald-100 text-emerald-800">26.2%</span></td>
+              <td class="py-3.5 pr-4 text-right text-xs text-gray-400">32 / 32</td>
+            </tr>
+            <tr class="border-b border-gray-50">
+              <td colspan="6" class="px-0 py-0">
+                <details>
+                  <summary class="flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50">
+                    <svg class="chevron size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+                    Run details &amp; config
+                  </summary>
+                  <div class="px-4 pb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Baseline command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-baseline-multi-remote --image-download missing --args-file configs/multi-client.yaml github.com/ethpandaops/ethereum-package</code>
+                      </div>
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Patched command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-patched-multi-remote --image-download missing --args-file configs/multi-client.yaml --parallel --parallelism 100 --resource-check=false github.com/ethpandaops/ethereum-package</code>
+                      </div>
+                    </div>
+                    <div class="mt-3">
+                      <div class="text-xs font-medium text-gray-500 mb-1">Config: configs/multi-client.yaml</div>
+                      <pre class="text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto"><code>participants:
+  - el_type: geth
+    cl_type: prysm
+  - el_type: reth
+    cl_type: teku
+  - el_type: nethermind
+    cl_type: nimbus
+  - el_type: geth
+    cl_type: teku
+  - el_type: reth
+    cl_type: grandine
+  - el_type: nethermind
+    cl_type: nimbus
+  - el_type: geth
+    cl_type: nimbus
+  - el_type: reth
+    cl_type: teku
+  - el_type: nethermind
+    cl_type: prysm
+network_params:
+  preset: minimal
+  genesis_delay: 5
+  electra_fork_epoch: 0
+  fulu_fork_epoch: 18446744073709551615
+parallel_keystore_generation: true
+additional_services:
+  - dora
+  - spamoor
+dora_params:
+  image: "ethpandaops/dora:latest"
+spamoor_params:
+  image: "ethpandaops/spamoor:latest"
+  max_mem: 4000
+  spammers:
+    - scenario: eoatx
+      config:
+        throughput: 200
+    - scenario: blobs
+      config:
+        throughput: 20
+docker_cache_params:
+  enabled: true
+  url: "docker.ethquokkaops.io"</code></pre>
+                    </div>
+                  </div>
+                </details>
+              </td>
+            </tr>
+            <tr class="border-b border-gray-100 group">
+              <td class="py-3.5 pr-4">
+                <div class="font-medium">single-client</div>
+                <div class="text-xs text-gray-400">local</div>
+              </td>
+              <td class="py-3.5 pr-4 text-right font-mono">24.80s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">19.73s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">-5.07s</td>
+              <td class="py-3.5 pr-4 text-right"><span class="inline-block px-2 py-0.5 rounded-xs text-xs font-semibold bg-emerald-100 text-emerald-800">20.4%</span></td>
+              <td class="py-3.5 pr-4 text-right text-xs text-gray-400">6 / 6</td>
+            </tr>
+            <tr class="border-b border-gray-50">
+              <td colspan="6" class="px-0 py-0">
+                <details>
+                  <summary class="flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50">
+                    <svg class="chevron size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+                    Run details &amp; config
+                  </summary>
+                  <div class="px-4 pb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Baseline command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-baseline-single-local --image-download missing --args-file configs/single-client.yaml ./ethereum-package</code>
+                      </div>
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Patched command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-patched-single-local --image-download missing --args-file configs/single-client.yaml --parallel --parallelism 100 --resource-check=false ./ethereum-package</code>
+                      </div>
+                    </div>
+                    <div class="mt-3">
+                      <div class="text-xs font-medium text-gray-500 mb-1">Config: configs/single-client.yaml</div>
+                      <pre class="text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto"><code>participants:
+  - el_type: geth
+    cl_type: teku
+network_params:
+  preset: minimal
+  genesis_delay: 5
+  electra_fork_epoch: 0
+  fulu_fork_epoch: 18446744073709551615
+parallel_keystore_generation: true
+additional_services:
+  - dora
+  - spamoor
+dora_params:
+  image: "ethpandaops/dora:latest"
+spamoor_params:
+  image: "ethpandaops/spamoor:latest"
+  max_mem: 4000
+  spammers:
+    - scenario: eoatx
+      config:
+        throughput: 200
+    - scenario: blobs
+      config:
+        throughput: 20
+docker_cache_params:
+  enabled: true
+  url: "docker.ethquokkaops.io"</code></pre>
+                    </div>
+                  </div>
+                </details>
+              </td>
+            </tr>
+            <tr class="border-b border-gray-100 group">
+              <td class="py-3.5 pr-4">
+                <div class="font-medium">single-client</div>
+                <div class="text-xs text-gray-400">remote</div>
+              </td>
+              <td class="py-3.5 pr-4 text-right font-mono">26.85s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">21.18s</td>
+              <td class="py-3.5 pr-4 text-right font-mono">-5.67s</td>
+              <td class="py-3.5 pr-4 text-right"><span class="inline-block px-2 py-0.5 rounded-xs text-xs font-semibold bg-emerald-100 text-emerald-800">21.1%</span></td>
+              <td class="py-3.5 pr-4 text-right text-xs text-gray-400">6 / 6</td>
+            </tr>
+            <tr class="border-b border-gray-50">
+              <td colspan="6" class="px-0 py-0">
+                <details>
+                  <summary class="flex items-center gap-2 px-4 py-2 text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50">
+                    <svg class="chevron size-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+                    Run details &amp; config
+                  </summary>
+                  <div class="px-4 pb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Baseline command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-baseline-single-remote --image-download missing --args-file configs/single-client.yaml github.com/ethpandaops/ethereum-package</code>
+                      </div>
+                      <div>
+                        <div class="text-xs font-medium text-gray-500 mb-1">Patched command</div>
+                        <code class="block text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto whitespace-pre">kurtosis run --enclave bench-patched-single-remote --image-download missing --args-file configs/single-client.yaml --parallel --parallelism 100 --resource-check=false github.com/ethpandaops/ethereum-package</code>
+                      </div>
+                    </div>
+                    <div class="mt-3">
+                      <div class="text-xs font-medium text-gray-500 mb-1">Config: configs/single-client.yaml</div>
+                      <pre class="text-xs bg-gray-900 text-gray-100 p-2.5 rounded-xs overflow-x-auto"><code>participants:
+  - el_type: geth
+    cl_type: teku
+network_params:
+  preset: minimal
+  genesis_delay: 5
+  electra_fork_epoch: 0
+  fulu_fork_epoch: 18446744073709551615
+parallel_keystore_generation: true
+additional_services:
+  - dora
+  - spamoor
+dora_params:
+  image: "ethpandaops/dora:latest"
+spamoor_params:
+  image: "ethpandaops/spamoor:latest"
+  max_mem: 4000
+  spammers:
+    - scenario: eoatx
+      config:
+        throughput: 200
+    - scenario: blobs
+      config:
+        throughput: 20
+docker_cache_params:
+  enabled: true
+  url: "docker.ethquokkaops.io"</code></pre>
+                    </div>
+                  </div>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script>
+      new Chart(document.getElementById('wallClockChart'), {
+        type: 'bar',
+        data: {
+          labels: ["multi-client / local","multi-client / remote","single-client / local","single-client / remote"],
+          datasets: [
+            { label: 'Baseline', data: [41.48,43.52,24.80,26.85], backgroundColor: 'rgba(96,165,250,0.8)', borderRadius: 3 },
+            { label: 'Patched', data: [31.74,32.12,19.73,21.18], backgroundColor: 'rgba(52,211,153,0.8)', borderRadius: 3 }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 20 } } },
+          scales: { y: { beginAtZero: true, title: { display: true, text: 'Seconds' }, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } }
+        }
+      });
+    </script>
+    <details class="bg-white shadow-xs rounded-sm mb-4 group">
+      <summary class="flex items-center justify-between p-5 hover:bg-gray-50">
+        <div class="flex items-center gap-3">
+          <svg class="chevron size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          <h2 class="text-base/6 font-semibold">APIC Phase Breakdown: multi-client / local</h2>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs text-gray-400">
+          <div class="size-2.5 rounded-xs bg-blue-400"></div> Baseline
+          <div class="ml-2 size-2.5 rounded-xs bg-emerald-400"></div> Patched
+        </div>
+      </summary>
+      <div class="px-5 pb-5">
+        <div class="h-56 mb-5">
+          <canvas id="phaseChart0"></canvas>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm/6">
+            <thead>
+              <tr class="border-b border-gray-200 text-left text-gray-500 text-xs uppercase tracking-wide">
+                <th class="pb-2 pr-4 font-medium">Phase</th>
+                <th class="pb-2 pr-4 font-medium text-right">Baseline</th>
+                <th class="pb-2 pr-4 font-medium text-right">Patched</th>
+                <th class="pb-2 pr-4 font-medium text-right">Delta</th>
+                <th class="pb-2 font-medium" style="min-width:180px">Comparison</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">execution phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">34.49s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">25.89s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-8.61s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:87.8%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:65.9%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetAvailableCPUAndMemory</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.04s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:5.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetServiceNames</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">getServiceNameToPortIDsMap</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">ImagesValidator.Validate</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.01s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">interpretation</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.72s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">3.83s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.11s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:6.9%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:9.7%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">package store/decompress</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.06s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.05s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.01s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage setup</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">39.30s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">29.74s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-9.56s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:100.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:75.7%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">runStarlarkPackageSetup: package resolution</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisRunner.Run total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">39.30s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">29.74s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-9.55s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:100.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:75.7%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisValidator.Validate total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.08s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.06s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:5.3%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">UploadStarlarkPackage total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.09s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.08s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.02s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.2%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateAndUpdateEnvironment</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateImagesAccountingForProgress</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.01s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validation phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.08s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.06s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:5.3%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validator env setup total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.04s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:5.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+    <script>
+      new Chart(document.getElementById('phaseChart0'), {
+        type: 'bar',
+        data: {
+          labels: ["execution phase","GetAvailableCPUAndMemory","interpretation","RunStarlarkPackage total","StartosisRunner.Run total","StartosisValidator.Validate total","validation phase","validator env setup total"],
+          datasets: [
+            { label: 'Baseline', data: [34.4930,2.0415,2.7192,39.3026,39.2971,2.0794,2.0796,2.0418], backgroundColor: 'rgba(96,165,250,0.8)', borderRadius: 3 },
+            { label: 'Patched', data: [25.8880,0.0000,3.8278,29.7430,29.7428,0.0230,0.0231,0.0003], backgroundColor: 'rgba(52,211,153,0.8)', borderRadius: 3 }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 20 } } },
+          scales: { x: { beginAtZero: true, title: { display: true, text: 'Seconds' }, grid: { color: 'rgba(0,0,0,0.04)' } }, y: { grid: { display: false } } }
+        }
+      });
+    </script>
+    <details class="bg-white shadow-xs rounded-sm mb-4 group">
+      <summary class="flex items-center justify-between p-5 hover:bg-gray-50">
+        <div class="flex items-center gap-3">
+          <svg class="chevron size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          <h2 class="text-base/6 font-semibold">APIC Phase Breakdown: multi-client / remote</h2>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs text-gray-400">
+          <div class="size-2.5 rounded-xs bg-blue-400"></div> Baseline
+          <div class="ml-2 size-2.5 rounded-xs bg-emerald-400"></div> Patched
+        </div>
+      </summary>
+      <div class="px-5 pb-5">
+        <div class="h-56 mb-5">
+          <canvas id="phaseChart1"></canvas>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm/6">
+            <thead>
+              <tr class="border-b border-gray-200 text-left text-gray-500 text-xs uppercase tracking-wide">
+                <th class="pb-2 pr-4 font-medium">Phase</th>
+                <th class="pb-2 pr-4 font-medium text-right">Baseline</th>
+                <th class="pb-2 pr-4 font-medium text-right">Patched</th>
+                <th class="pb-2 pr-4 font-medium text-right">Delta</th>
+                <th class="pb-2 font-medium" style="min-width:180px">Comparison</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">execution phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">35.34s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">26.18s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-9.16s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:84.7%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:62.7%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetAvailableCPUAndMemory</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.04s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:4.9%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetServiceNames</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">getServiceNameToPortIDsMap</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">ImagesValidator.Validate</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.03s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">interpretation</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.46s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.41s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:5.9%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:5.8%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage setup</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.83s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.65s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.18s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:4.4%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:4.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">41.72s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">30.25s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-11.47s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:100.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:72.5%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">runStarlarkPackageSetup: package resolution</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.83s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.65s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.18s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:4.4%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:4.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisRunner.Run total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">39.89s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">28.60s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-11.29s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:95.6%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:68.5%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisValidator.Validate total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.08s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.07s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:5.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateAndUpdateEnvironment</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateImagesAccountingForProgress</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.03s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validation phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.08s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.07s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:5.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validator env setup total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.04s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:4.9%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+    <script>
+      new Chart(document.getElementById('phaseChart1'), {
+        type: 'bar',
+        data: {
+          labels: ["execution phase","GetAvailableCPUAndMemory","interpretation","RunStarlarkPackage setup","RunStarlarkPackage total","runStarlarkPackageSetup: package resolution","StartosisRunner.Run total","StartosisValidator.Validate total","validation phase","validator env setup total"],
+          datasets: [
+            { label: 'Baseline', data: [35.3436,2.0443,2.4581,1.8327,41.7244,1.8324,39.8875,2.0827,2.0828,2.0446], backgroundColor: 'rgba(96,165,250,0.8)', borderRadius: 3 },
+            { label: 'Patched', data: [26.1814,0.0000,2.4056,1.6496,30.2530,1.6493,28.6009,0.0118,0.0119,0.0001], backgroundColor: 'rgba(52,211,153,0.8)', borderRadius: 3 }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 20 } } },
+          scales: { x: { beginAtZero: true, title: { display: true, text: 'Seconds' }, grid: { color: 'rgba(0,0,0,0.04)' } }, y: { grid: { display: false } } }
+        }
+      });
+    </script>
+    <details class="bg-white shadow-xs rounded-sm mb-4 group">
+      <summary class="flex items-center justify-between p-5 hover:bg-gray-50">
+        <div class="flex items-center gap-3">
+          <svg class="chevron size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          <h2 class="text-base/6 font-semibold">APIC Phase Breakdown: single-client / local</h2>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs text-gray-400">
+          <div class="size-2.5 rounded-xs bg-blue-400"></div> Baseline
+          <div class="ml-2 size-2.5 rounded-xs bg-emerald-400"></div> Patched
+        </div>
+      </summary>
+      <div class="px-5 pb-5">
+        <div class="h-56 mb-5">
+          <canvas id="phaseChart2"></canvas>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm/6">
+            <thead>
+              <tr class="border-b border-gray-200 text-left text-gray-500 text-xs uppercase tracking-wide">
+                <th class="pb-2 pr-4 font-medium">Phase</th>
+                <th class="pb-2 pr-4 font-medium text-right">Baseline</th>
+                <th class="pb-2 pr-4 font-medium text-right">Patched</th>
+                <th class="pb-2 pr-4 font-medium text-right">Delta</th>
+                <th class="pb-2 font-medium" style="min-width:180px">Comparison</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">execution phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">18.09s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">15.22s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.87s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:80.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:67.3%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetAvailableCPUAndMemory</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.05s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:9.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetServiceNames</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">getServiceNameToPortIDsMap</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">ImagesValidator.Validate</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.03s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.03s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">interpretation</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.46s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.46s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:10.9%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:10.9%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">package store/decompress</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.06s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.08s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.3%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.3%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage setup</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">22.63s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">17.72s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-4.91s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:100.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:78.3%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">runStarlarkPackageSetup: package resolution</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisRunner.Run total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">22.63s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">17.71s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-4.92s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:100.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:78.3%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisValidator.Validate total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.07s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.03s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:9.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">UploadStarlarkPackage total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.10s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.11s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.4%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.5%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateAndUpdateEnvironment</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateImagesAccountingForProgress</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.03s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.03s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validation phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.07s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.03s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:9.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validator env setup total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.05s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:9.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+    <script>
+      new Chart(document.getElementById('phaseChart2'), {
+        type: 'bar',
+        data: {
+          labels: ["execution phase","GetAvailableCPUAndMemory","interpretation","RunStarlarkPackage total","StartosisRunner.Run total","StartosisValidator.Validate total","validation phase","validator env setup total"],
+          datasets: [
+            { label: 'Baseline', data: [18.0935,2.0458,2.4593,22.6275,22.6270,2.0723,2.0725,2.0460], backgroundColor: 'rgba(96,165,250,0.8)', borderRadius: 3 },
+            { label: 'Patched', data: [15.2243,0.0000,2.4591,17.7155,17.7115,0.0258,0.0261,0.0001], backgroundColor: 'rgba(52,211,153,0.8)', borderRadius: 3 }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 20 } } },
+          scales: { x: { beginAtZero: true, title: { display: true, text: 'Seconds' }, grid: { color: 'rgba(0,0,0,0.04)' } }, y: { grid: { display: false } } }
+        }
+      });
+    </script>
+    <details class="bg-white shadow-xs rounded-sm mb-4 group">
+      <summary class="flex items-center justify-between p-5 hover:bg-gray-50">
+        <div class="flex items-center gap-3">
+          <svg class="chevron size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+          <h2 class="text-base/6 font-semibold">APIC Phase Breakdown: single-client / remote</h2>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs text-gray-400">
+          <div class="size-2.5 rounded-xs bg-blue-400"></div> Baseline
+          <div class="ml-2 size-2.5 rounded-xs bg-emerald-400"></div> Patched
+        </div>
+      </summary>
+      <div class="px-5 pb-5">
+        <div class="h-56 mb-5">
+          <canvas id="phaseChart3"></canvas>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm/6">
+            <thead>
+              <tr class="border-b border-gray-200 text-left text-gray-500 text-xs uppercase tracking-wide">
+                <th class="pb-2 pr-4 font-medium">Phase</th>
+                <th class="pb-2 pr-4 font-medium text-right">Baseline</th>
+                <th class="pb-2 pr-4 font-medium text-right">Patched</th>
+                <th class="pb-2 pr-4 font-medium text-right">Delta</th>
+                <th class="pb-2 font-medium" style="min-width:180px">Comparison</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">execution phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">18.72s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">15.15s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-3.57s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:74.8%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:60.6%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetAvailableCPUAndMemory</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.04s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:8.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">GetServiceNames</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">getServiceNameToPortIDsMap</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">ImagesValidator.Validate</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.01s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">interpretation</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.60s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.55s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:10.4%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:10.2%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage setup</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.63s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.65s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:6.5%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:6.6%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">RunStarlarkPackage total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">25.02s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">19.37s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-5.65s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:100.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:77.4%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">runStarlarkPackageSetup: package resolution</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.63s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">1.65s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:6.5%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:6.6%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisRunner.Run total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">23.39s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">17.72s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-5.67s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:93.5%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:70.8%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">StartosisValidator.Validate total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.07s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:8.3%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateAndUpdateEnvironment</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.00s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.0%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validateImagesAccountingForProgress</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.02s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-0.01s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:0.1%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validation phase</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.07s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.01s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.05s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:8.3%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.1%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-50">
+                <td class="py-2 pr-4 text-xs">validator env setup total</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">2.04s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">0.00s</td>
+                <td class="py-2 pr-4 text-right font-mono text-xs">-2.04s</td>
+                <td class="py-2">
+                  <div class="flex flex-col gap-0.5">
+                    <div class="h-2 rounded-xs bg-blue-400" style="width:8.2%"></div>
+                    <div class="h-2 rounded-xs bg-emerald-400" style="width:0.0%"></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+    <script>
+      new Chart(document.getElementById('phaseChart3'), {
+        type: 'bar',
+        data: {
+          labels: ["execution phase","GetAvailableCPUAndMemory","interpretation","RunStarlarkPackage setup","RunStarlarkPackage total","runStarlarkPackageSetup: package resolution","StartosisRunner.Run total","StartosisValidator.Validate total","validation phase","validator env setup total"],
+          datasets: [
+            { label: 'Baseline', data: [18.7187,2.0437,2.6030,1.6284,25.0223,1.6282,23.3883,2.0655,2.0655,2.0439], backgroundColor: 'rgba(96,165,250,0.8)', borderRadius: 3 },
+            { label: 'Patched', data: [15.1528,0.0000,2.5546,1.6468,19.3696,1.6466,17.7228,0.0138,0.0139,0.0001], backgroundColor: 'rgba(52,211,153,0.8)', borderRadius: 3 }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'rectRounded', padding: 20 } } },
+          scales: { x: { beginAtZero: true, title: { display: true, text: 'Seconds' }, grid: { color: 'rgba(0,0,0,0.04)' } }, y: { grid: { display: false } } }
+        }
+      });
+    </script>
+    <footer class="text-center text-xs text-gray-400 py-8 border-t border-gray-100 mt-8">
+      Generated by kt-speed-tests &middot; 2026-03-04T04:59:13Z
+    </footer>
+  </div>
+</body>
+</html>
